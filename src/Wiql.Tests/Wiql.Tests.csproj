@@ -38,6 +38,12 @@
     <ProjectReference Include="..\Wiql.Services\Wiql.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestData\ComplexQuery.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   
 
 </Project>

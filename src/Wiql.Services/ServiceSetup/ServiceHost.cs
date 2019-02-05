@@ -22,6 +22,8 @@ namespace Wiql.Services.ServiceSetup
             services.Configure<AzureDevOpsSettings>(configuration.GetSection(nameof(AzureDevOpsSettings)));
             services.AddTransient<IAzureDevopsAuthService, AzureDevopsAuthService>();
             services.AddTransient<IAppStartupService, AppStartupService>();
+            services.AddTransient<IAzureDevOpsService, AzureDevOpsService>();
+
             return this;
         }
 
