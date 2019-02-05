@@ -6,5 +6,6 @@
         string GetBasicAuth();
         string GetTeamBaseUrl();
         string GetProjectBaseUrl();
+        void WriteSettings();
     }
 }

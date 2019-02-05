@@ -21,53 +21,54 @@ namespace Wiql.CommandLine
         /// <param name="query">A WIQL query. Do not use with teh workItems flag</param>
         /// <param name="workItems">A comma separated list of work item ids to load</param>
         /// <returns>Json result</returns>
-        public static async Task<string> Main(string pat = null, 
+        public static async Task Main(string pat = null, 
             string userEmail = null, 
             string org = null, 
             string project = null, 
             string team = null, 
-            string query = null, 
-            string workItems = null
+            string query = null
             )
         {
             if (!string.IsNullOrWhiteSpace(pat))
             {
                 _setVar("PersonalAccessToken", pat);
             }
+
             if (!string.IsNullOrWhiteSpace(userEmail))
             {
                 _setVar("UserEmail", userEmail);
             }
+
             if (!string.IsNullOrWhiteSpace(org))
             {
                 _setVar("Organization", org);
             }
+
             if (!string.IsNullOrWhiteSpace(project))
             {
                 _setVar("Project", project);
             }
+
             if (!string.IsNullOrWhiteSpace(team))
             {
-                _setVar("Project", team);
+                _setVar("Team", team);
             }
+
             if (!string.IsNullOrWhiteSpace(query))
             {
                 _setVar("WiqlQuery", query);
             }
-            if (!string.IsNullOrWhiteSpace(workItems))
-            {
-                _setVar("WorkItems", query);
-            }
+            
 
             var appHost = new AppHostBase();
 
             var appStartup = appHost.Resolve<IAppStartupService>();
-
+            
             var result = await appStartup.RunApp();
 
             //Environment.ExitCode = result;
 
-            return result;
+            //return result;
 
         }
 

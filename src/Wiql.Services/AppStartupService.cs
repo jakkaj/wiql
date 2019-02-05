@@ -12,16 +12,20 @@ namespace Wiql.Services
     public class AppStartupService : IAppStartupService
     {
         private readonly IAzureDevOpsService _azureDevOpsService;
+        private readonly IAzureDevopsAuthService _authService;
         private readonly IOptions<AzureDevOpsSettings> _options;
 
         public AppStartupService(IAzureDevOpsService azureDevOpsService, 
+            IAzureDevopsAuthService authService,
             IOptions<AzureDevOpsSettings> options)
         {
             _azureDevOpsService = azureDevOpsService;
+            _authService = authService;
             _options = options;
         }
         public async Task<string> RunApp()
         {
+            _authService.WriteSettings();
             var result = await _azureDevOpsService.RunQuery(_options.Value.WiqlQuery);
             var json = JsonConvert.SerializeObject(result);
 

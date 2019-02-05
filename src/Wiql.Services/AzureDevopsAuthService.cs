@@ -17,6 +17,12 @@ namespace Wiql.Services
             _options = options;
         }
 
+        public void WriteSettings()
+        {
+            Console.WriteLine($"{_options.Value.Organization}, {_options.Value.Project}, {_options.Value.Team}");
+        }
+        
+
         public string GetProjectBaseUrl()
         {
             var org = HttpUtility.UrlEncode(_options.Value.Organization);
