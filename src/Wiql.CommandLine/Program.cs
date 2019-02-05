@@ -66,6 +66,9 @@ namespace Wiql.CommandLine
             
             var result = await appStartup.RunApp();
 
+            Console.WriteLine(result);
+            
+                
             //Environment.ExitCode = result;
 
             //return result;
