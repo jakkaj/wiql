@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Wiql.Contract;
 using Wiql.Model.Model.AzureDevOps;
 
@@ -23,10 +24,10 @@ namespace Wiql.Services
         }
 
         private const int WI_LIMIT = 400;
-        public List<WorkItemData> _getWorkItems(List<string> origList)
+        public List<dynamic> _getWorkItems(List<string> origList)
         {
-            var wiResult = new List<WorkItemData>();
-
+            var wiResult = new List<dynamic>();
+            
             var idList = origList.ToList();
 
             while (idList.Count > 0)
@@ -48,15 +49,19 @@ namespace Wiql.Services
 
                 if (string.IsNullOrWhiteSpace(ids))
                 {
-                    return new List<WorkItemData>();
+                    return new List<dynamic>();
                 }
                 var allIdUrl =
                     $"{_authService.GetProjectBaseUrl()}_apis/wit/workitems?ids={ids}&$expand=relations&api-version=5.0";
 
                 var result = _runUrl(allIdUrl);
 
-                var entities = JsonConvert.DeserializeObject<WorkItemGet>(result);
-                wiResult.AddRange(entities.value);
+                dynamic dynResult = JObject.Parse(result);
+
+              //  var testObj = dynResult.value[0].id;
+
+                //var entities = JsonConvert.DeserializeObject<WorkItemGet>(result);
+                wiResult.AddRange(dynResult.value);
             }
 
 
@@ -64,7 +69,7 @@ namespace Wiql.Services
             return wiResult;
         }
 
-        public async Task<List<SimpleWorkItem>> RunQuery(string query)
+        public async Task<List<dynamic>> RunQuery(string query)
         {
             if (query.IndexOf("{") == -1)
             {
@@ -84,7 +89,7 @@ namespace Wiql.Services
 
             var hierarchy = _getHeirarchyAll(itemIds);
 
-            List<Task<SimpleWorkItem>> _allTasks = new List<Task<SimpleWorkItem>>();
+            List<Task<dynamic>> _allTasks = new List<Task<dynamic>>();
 
 
             //var together = (workItems, hierarchy);
@@ -99,92 +104,81 @@ namespace Wiql.Services
             }
 
             var wiResult = await Task.WhenAll(_allTasks);
-            var wiList = wiResult.ToList();
+            var wiList = wiResult.Select(_=>_.Result).ToList();
             wiList.ToList().RemoveAll(_ => _ == null);
             return wiList;
             
 
         }
 
-        async Task<SimpleWorkItem> _populateItem(WorkItemData wi, WorkItemRelations relations)
+        async Task<dynamic> _populateItem(dynamic wi, dynamic relations)
         {
-            var title = wi.fields.Title;
+            //var title = wi.fields.Title;
 
-            var startDate = wi.fields.ParticipationStartDate ?? wi.fields.ActivityStartDate;
-            var duration = wi.fields.ParticipationDurationDays ??
-                           wi.fields.ActivityDuration;
+            var url = $"{_authService.GetProjectBaseUrl()}_workitems/edit/{wi.id}";
 
-            if (startDate == null)
-            {
-                return null;
-            }
+            //var dtOffset = DateTimeOffset.Parse(startDate, null);
 
-            var url = $"{_authService.GetBasicAuth()}_workitems/edit/{wi.id}";
-
-            var dtOffset = DateTimeOffset.Parse(startDate, null);
-
-            var startDateParsed = dtOffset.DateTime;
-            var endDate = _addBusinessDays(startDateParsed, Convert.ToInt32(Math.Ceiling((float.Parse(duration)))));
+            //var startDateParsed = dtOffset.DateTime;
+            //var endDate = _addBusinessDays(startDateParsed, Convert.ToInt32(Math.Ceiling((float.Parse(duration)))));
             
 
-            Debug.WriteLine($"Title: {title}, Type: {wi.fields.WorkItemType}, Start: {startDateParsed.ToLongDateString()}, Duration: {duration}, End:{endDate.ToLongDateString()}");
+            //Debug.WriteLine($"Title: {title}, Type: {wi.fields.WorkItemType}, Start: {startDateParsed.ToLongDateString()}, Duration: {duration}, End:{endDate.ToLongDateString()}");
 
 
             var hierarchy = _getParents(wi, relations);
 
-            var simpleWorkItem = new SimpleWorkItem
-            {
-                EndDate = endDate,
-                StartDate = startDateParsed,
-                Title = title,
-                Url = url,
-                Parents = new List<SimpleWorkItem>(),
-                AssignedTo = wi.fields.AssignedTo
-            };
-
             var hTitle = "";
+            var parentList = new List<dynamic>();
 
             foreach (var hItem in hierarchy)
             {
-                simpleWorkItem.Parents.Add(new SimpleWorkItem
+                parentList.Add(new
                 {
-                    Title = hItem.fields.Title,
+                    Object = hItem,
                     Url = $"{_authService.GetProjectBaseUrl()}_workitems/edit/{hItem.id}"
                 });
-                hTitle += hItem.fields.Title + "\\";
-            }
-            simpleWorkItem.FullTitle = hTitle + simpleWorkItem.Title;
 
-            if (wi.fields.WorkItemType == "Activity")
-            {
-                if (simpleWorkItem.Parents.Count > 0)
-                {
-                    simpleWorkItem.Title = simpleWorkItem.Parents[simpleWorkItem.Parents.Count - 2].Title + "\\" + simpleWorkItem.Parents.Last().Title + "\\" + simpleWorkItem.Title;
-                }
-            }
-            else
-            {
-                if (simpleWorkItem.Parents.Count > 2)
-                {
-                    simpleWorkItem.Title = simpleWorkItem.Parents[simpleWorkItem.Parents.Count - 3].Title + "\\" + simpleWorkItem.Parents[simpleWorkItem.Parents.Count - 2].Title + "\\" + simpleWorkItem.Parents.Last().Title;
-                }
             }
 
+            var simpleWorkItem = new
+            {
+                Object = wi,
+                Url = url,
+                Parents = parentList,
+            };
+            
             return simpleWorkItem;
         }
 
-        List<WorkItemData> _getParents(WorkItemData wi, WorkItemRelations relations)
+        List<dynamic> _getParents(dynamic wi, dynamic relations)
         {
 
             var id = wi.id;
-            var parent = relations.Relations.workItemRelations
-                .Where(_ => _.rel == "System.LinkTypes.Hierarchy-Forward" && _.target.id == id)
-                .Select(_ => _.source.id.ToString()).FirstOrDefault();
 
+            var parent = "";
 
-            var parentItem = relations.WorkItems.FirstOrDefault(_ => _.id.ToString() == parent);
+            foreach (var wiCheck in relations.Relations.workItemRelations)
+            {
+                if (wiCheck.rel == "System.LinkTypes.Hierarchy-Forward" && wiCheck.target.id.ToString() == id.ToString())
+                {
+                    parent = wiCheck.source.id.ToString();
+                    break;
+                }
+            }
 
-            var wiList = new List<WorkItemData>();
+            dynamic parentItem = null;
+
+            foreach (var relItemCheck in relations.WorkItems)
+            {
+                if (relItemCheck.id == parent)
+                {
+                    parentItem = relItemCheck;
+                    break;
+                }
+            }
+            
+            var wiList = new List<dynamic>();
 
             if (parentItem == null)
             {
@@ -195,12 +189,36 @@ namespace Wiql.Services
             wiList.Add(parentItem);
 
             while (parent != null)
-            {
-                parent = relations.Relations.workItemRelations
-                    .Where(_ => _.rel == "System.LinkTypes.Hierarchy-Forward" && _.target.id.ToString() == parent)
-                    .Select(_ => _.source.id.ToString()).FirstOrDefault();
-                parentItem = relations.WorkItems.FirstOrDefault(_ => _.id.ToString() == parent);
+            { 
+                foreach (var sourceParent in relations.Relations.workItemRelations)
+                {
+                    if (sourceParent.rel == "System.LinkTypes.Hierarchy-Forward" &&
+                        sourceParent.target.id.ToString() == parent)
+                    {
+                        parent = sourceParent.source.id.ToString();
+                        break;
+                    }
 
+                    parent = null;
+                }
+
+                if (parent == null)
+                {
+                    break;
+                }
+
+                parentItem = null;
+
+                foreach (var getParentItem in relations.WorkItems)
+                {
+                    if (getParentItem.id == parent)
+                    {
+                        parentItem = getParentItem;
+                        break;
+                    }
+                }
+
+                
                 if (parentItem == null)
                 {
                     continue;
@@ -248,7 +266,7 @@ namespace Wiql.Services
         }
 
 
-        WorkItemRelations _getHeirarchyAll(List<string> ids)
+        dynamic _getHeirarchyAll(List<string> ids)
         {
 
             var idGroup = "";
@@ -285,17 +303,30 @@ namespace Wiql.Services
 
             Debug.WriteLine(string.Join(',', relChainUpWorkItems.Select(_ => _.id)));
 
-            var wiRel = new WorkItemRelations
+            var wiRel = new 
             {
                 WorkItems = relChainUpWorkItems,
                 Relations = rel
             };
 
             return wiRel;
+
+            //var wiRel = new WorkItemRelations
+            //{
+            //    WorkItems = relChainUpWorkItems,
+            //    Relations = rel
+            //};
+
+            //return wiRel;
         }
 
         public string RunQueryRaw(string query)
         {
+            if (query.IndexOf("{") == -1)
+            {
+                query = $"{{\"query\":\"{query}\"}}";
+            }
+
             var wc = new WebClient();
             wc.Headers.Add("Authorization", _authService.GetBasicAuth());
             wc.Headers.Add("Content-Type", "application/json");

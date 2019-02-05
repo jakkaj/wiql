@@ -8,7 +8,7 @@ namespace Wiql.Contract
 {
     public interface IAzureDevOpsService
     {
-        Task<List<SimpleWorkItem>> RunQuery(string query);
+        Task<List<dynamic>> RunQuery(string query);
         string RunQueryRaw(string query);
     }
 }
