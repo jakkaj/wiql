@@ -7,5 +7,7 @@
         public string Organization { get; set; }
         public string Project { get; set; }
         public string Team { get; set; }
+        public string WiqlQuery { get; set; }
+        public string WorkItems { get; set; }
     }
 }
