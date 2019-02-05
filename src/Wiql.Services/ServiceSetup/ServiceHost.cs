@@ -6,6 +6,7 @@ using System.Text;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Wiql.Contract;
 using Wiql.Model.Model;
 
 namespace Wiql.Services.ServiceSetup
@@ -19,6 +20,7 @@ namespace Wiql.Services.ServiceSetup
         public ServiceHost Configure(IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<AzureDevOpsSettings>(configuration.GetSection(nameof(AzureDevOpsSettings)));
+            services.AddTransient<IAzureDevopsAuthService, AzureDevopsAuthService>();
 
             return this;
         }
