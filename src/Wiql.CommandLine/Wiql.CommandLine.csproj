@@ -20,6 +20,11 @@
     <PackageReference Include="System.CommandLine.DragonFruit" Version="0.1.0-alpha-63724-02" />
     <PackageReference Include="System.CommandLine.Experimental" Version="0.1.0-alpha-63724-02" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets " Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,6 +4,6 @@ namespace Wiql.Contract
 {
     public interface IAppStartupService
     {
-        Task<int> RunApp();
+        Task<string> RunApp();
     }
 }

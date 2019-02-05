@@ -11,7 +11,7 @@ namespace Wiql.Services.ServiceSetup
         private IServiceProvider ServiceProvider { get; set; }
         private IServiceCollection ServiceCollection { get; set; }
 
-        public AppHost()
+        public void Boot()
         {
             DotNetEnv.Env.Load(true, true, true, false);
 

@@ -21,7 +21,7 @@ namespace Wiql.CommandLine
         /// <param name="query">A WIQL query. Do not use with teh workItems flag</param>
         /// <param name="workItems">A comma separated list of work item ids to load</param>
         /// <returns>Json result</returns>
-        public static async Task Main(string pat = null, 
+        public static async Task<string> Main(string pat = null, 
             string userEmail = null, 
             string org = null, 
             string project = null, 
@@ -65,7 +65,10 @@ namespace Wiql.CommandLine
 
             var result = await appStartup.RunApp();
 
-            Environment.ExitCode = result;
+            //Environment.ExitCode = result;
+
+            return result;
+
         }
 
         static void _setVar(string var, string value)

@@ -7,5 +7,9 @@ namespace Wiql.CommandLine
 {
     public class AppHostBase : AppHost<AppHostBase>
     {
+        public AppHostBase()
+        {
+            Boot();
+        }
     }
 }
