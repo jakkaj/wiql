@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <UserSecretsId>8950e15a-aa07-40d1-8f7e-7b33012ed82a</UserSecretsId>
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
@@ -18,6 +19,13 @@
   <ItemGroup>
     <PackageReference Include="System.CommandLine.DragonFruit" Version="0.1.0-alpha-63724-02" />
     <PackageReference Include="System.CommandLine.Experimental" Version="0.1.0-alpha-63724-02" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets " Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wiql.Contract\Wiql.Contract.csproj" />
+    <ProjectReference Include="..\Wiql.Model\Wiql.Model.csproj" />
+    <ProjectReference Include="..\Wiql.Services\Wiql.Services.csproj" />
   </ItemGroup>
 
 </Project>

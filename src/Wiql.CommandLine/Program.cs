@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Wiql.Contract;
+
+[assembly: InternalsVisibleTo("Wiql.Tests")]
 
 namespace Wiql.CommandLine
 {
+    
     class Program
     {
         /// <summary>
@@ -16,7 +21,7 @@ namespace Wiql.CommandLine
         /// <param name="query">A WIQL query. Do not use with teh workItems flag</param>
         /// <param name="workItems">A comma separated list of work item ids to load</param>
         /// <returns>Json result</returns>
-        static async Task Main(string pat = null, 
+        public static async Task Main(string pat = null, 
             string userEmail = null, 
             string org = null, 
             string project = null, 
@@ -54,6 +59,13 @@ namespace Wiql.CommandLine
                 _setVar("WorkItems", query);
             }
 
+            var appHost = new AppHostBase();
+
+            var appStartup = appHost.Resolve<IAppStartupService>();
+
+            var result = await appStartup.RunApp();
+
+            Environment.ExitCode = result;
         }
 
         static void _setVar(string var, string value)

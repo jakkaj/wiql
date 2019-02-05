@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Wiql.CommandLine\Wiql.CommandLine.csproj" />
     <ProjectReference Include="..\Wiql.Contract\Wiql.Contract.csproj" />
     <ProjectReference Include="..\Wiql.Model\Wiql.Model.csproj" />
     <ProjectReference Include="..\Wiql.Services\Wiql.Services.csproj" />
