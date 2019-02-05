@@ -160,7 +160,8 @@ namespace Wiql.Services
 
             foreach (var wiCheck in relations.Relations.workItemRelations)
             {
-                if (wiCheck.rel == "System.LinkTypes.Hierarchy-Forward" && wiCheck.target.id.ToString() == id.ToString())
+                if (wiCheck.rel == "System.LinkTypes.Hierarchy-Forward" && 
+                    wiCheck.target.id.ToString() == id.ToString())
                 {
                     parent = wiCheck.source.id.ToString();
                     break;
@@ -189,20 +190,22 @@ namespace Wiql.Services
             wiList.Add(parentItem);
 
             while (parent != null)
-            { 
+            {
+                bool parentFound = false;
                 foreach (var sourceParent in relations.Relations.workItemRelations)
                 {
                     if (sourceParent.rel == "System.LinkTypes.Hierarchy-Forward" &&
                         sourceParent.target.id.ToString() == parent)
                     {
                         parent = sourceParent.source.id.ToString();
+                        parentFound = true;
                         break;
                     }
 
-                    parent = null;
+                    //parent = null;
                 }
 
-                if (parent == null)
+                if (!parentFound)
                 {
                     break;
                 }

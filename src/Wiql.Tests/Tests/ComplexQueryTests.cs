@@ -34,5 +34,25 @@ namespace Wiql.Tests.Tests
 
             Assert.IsTrue(queryResult.Count > 0);
         }
+
+        [TestMethod]
+        public async Task TestSimpleQueryGetIds()
+        {
+            var service = Resolve<IAzureDevOpsService>();
+
+            var query = File.ReadAllText("TestData/SimpleQuery.txt");
+
+            Assert.IsNotNull(query);
+
+            var queryResult = await service.RunQuery(query);
+
+            Assert.IsNotNull(queryResult);
+
+            var json = JsonConvert.SerializeObject(queryResult);
+
+            Debug.WriteLine(json);
+
+            Assert.IsTrue(queryResult.Count > 0);
+        }
     }
 }
