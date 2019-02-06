@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
 using Wiql.Contract;
 
@@ -58,21 +59,40 @@ namespace Wiql.CommandLine
             {
                 _setVar("WiqlQuery", query);
             }
-            
+           
+            var pipedQuery = "";
+
+            var isKeyAvailable = false;
+
+            try
+            {
+                isKeyAvailable = System.Console.KeyAvailable;
+            }
+
+            catch (InvalidOperationException expected)
+            {
+                pipedQuery = System.Console.In.ReadToEnd();
+            }
+
+            if (!string.IsNullOrWhiteSpace(pipedQuery))
+            {
+                _setVar("WiqlQuery", pipedQuery);
+            }
 
             var appHost = new AppHostBase();
 
             var appStartup = appHost.Resolve<IAppStartupService>();
             
             var result = await appStartup.RunApp();
-
+            int n;
+            bool isNumeric = int.TryParse(result, out n);
+            if (isNumeric)
+            {
+                Environment.Exit(n);
+                return;
+            }
             Console.WriteLine(result);
             
-                
-            //Environment.ExitCode = result;
-
-            //return result;
-
         }
 
         static void _setVar(string var, string value)
