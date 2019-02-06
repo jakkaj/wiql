@@ -76,6 +76,11 @@ namespace Wiql.CommandLine
 
             if (!string.IsNullOrWhiteSpace(pipedQuery))
             {
+                //Check for strangeness piped in from console
+                var bytes = Encoding.UTF8.GetBytes(pipedQuery);                
+                if(bytes[0] == 239){
+                    pipedQuery = pipedQuery.Substring(1);
+                }
                 _setVar("WiqlQuery", pipedQuery);
             }
 

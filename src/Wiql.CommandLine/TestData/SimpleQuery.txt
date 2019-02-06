@@ -11,3 +11,4 @@ WHERE
     AND [System.WorkItemType] <> ''
     AND [System.State] <> ''
     AND [System.Id] = 163872
+    

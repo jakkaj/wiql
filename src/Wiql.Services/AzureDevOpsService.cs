@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -333,11 +334,22 @@ namespace Wiql.Services
             var wc = new WebClient();
             wc.Headers.Add("Authorization", _authService.GetBasicAuth());
             wc.Headers.Add("Content-Type", "application/json");
-            var result = wc.UploadString(
-                $"{_authService.GetTeamBaseUrl()}_apis/wit/wiql?api-version=1.0",
+            try{
+                var result = wc.UploadString(
+                $"{_authService.GetTeamBaseUrl()}_apis/wit/wiql?api-version=5.0",
                 query);
 
-            return result;
+                return result;
+            }catch(System.Net.WebException ex){
+                
+                Console.WriteLine(ex.Message);
+                var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                Console.WriteLine(resp);
+                Console.WriteLine(query);
+            }
+
+            return null;
+           
 
         }
 
