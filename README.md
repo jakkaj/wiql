@@ -39,6 +39,14 @@ You'll need your Organization, Project and Team name from Azure DevOps. The easi
 https://dev.azure.com/<org>/<project>/_backlogs/backlog/<team name>/Stories
 ```
 
+## Docker
+
+I've popped a docker container up that you can use to run this
+
+```
+cat  SimpleQuery.txt |  docker run -i jakkaj/wiql ./wiql --pat <pat> --user-email "user@user.com" --org <org> --project <project> --team "<team>"
+```
+
 ## Usage
 
 For now you'll need to run with the dotnet command
