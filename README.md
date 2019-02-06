@@ -44,7 +44,7 @@ https://dev.azure.com/<org>/<project>/_backlogs/backlog/<team name>/Stories
 I've popped a docker container up that you can use to run this
 
 ```
-cat  SimpleQuery.txt |  docker run -i jakkaj/wiql ./wiql --pat <pat> --user-email "user@user.com" --org <org> --project <project> --team "<team>"
+cat  SimpleQuery.txt |  docker run -i jakkaj/wiql ./wiql --pat <pat> --user-email "user@user.com" --org <org> --project <project> --team "<team>" >> out.json
 ```
 
 ## Usage
