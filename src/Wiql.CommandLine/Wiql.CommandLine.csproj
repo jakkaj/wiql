@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>8950e15a-aa07-40d1-8f7e-7b33012ed82a</UserSecretsId>
     <LangVersion>7.3</LangVersion>
+    <RuntimeIdentifiers>win10-x64;linux-x64;osx.10.13-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
