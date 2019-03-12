@@ -42,6 +42,9 @@
     <None Update="TestData\ComplexQuery.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\DrewQuery.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\SimpleQuery.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

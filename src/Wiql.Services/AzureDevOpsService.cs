@@ -80,8 +80,13 @@ namespace Wiql.Services
             var result = RunQueryRaw(query);
 
             var queryResult = JsonConvert.DeserializeObject<WorkItemQueryResults>(result);
+            
+            var itemIds = queryResult.workItems?.Select(_ => _.id.ToString()).ToList();
 
-            var itemIds = queryResult.workItems.Select(_ => _.id.ToString()).ToList();
+            if (itemIds == null)
+            {
+                return new List<dynamic>();
+            }
 
             var allIds = string.Join(',', itemIds);
             Debug.WriteLine(allIds);

@@ -1,0 +1,24 @@
+﻿SELECT
+    [System.Id],
+    [System.Title],
+    [System.AssignedTo],
+    [CSEngineering-V2.ADSDevCrew],
+    [CSEngineering-V2.EngagementDevCrew],
+    [System.State],
+    [CSEngineering-V2.EngagementStartDate],
+    [CSEngineering-V2.EngagementEndDate]
+FROM workitemLinks
+WHERE
+    (
+        [Source].[System.WorkItemType] = 'Organization'
+        AND [Source].[System.State] <> ''
+        AND [Source].[CSEngineering-V2.CountrySelection] = 'Japan'
+        AND [Source].[CSEngineering-V2-Orgs.T400] = true
+    )
+    AND (
+        [Target].[System.WorkItemType] = 'Engagement'
+    )
+ORDER BY [CSEngineering-V2.ADSDevCrew],
+    [System.Id]
+MODE (MustContain)
+
